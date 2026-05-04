@@ -1,0 +1,11 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "endstone-essmakitazo"
+version = "0.1.0"
+description = "Im bored"
+
+[project.entry-points."endstone"]
+essmakitazo = "endstone_essmakitazo:Main"
