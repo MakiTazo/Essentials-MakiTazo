@@ -31,16 +31,12 @@ Plugin para Endstone que añade funcionalidades clásicas estilo *Essentials* co
 
 El plugin generará automáticamente un archivo de configuración en la carpeta correspondiente. Puedes modificarlo según tus necesidades.
 
-## Requisitos
-
-* Servidor compatible con Endstone
-* Versión de Java requerida por el servidor
-
 ## Roadmap
 
-* Sistema de warps
-* Sistema de economía básica
-* Más comandos tipo Essentials
+* `warps`
+* `eco`
+* `teleports`
+* Y más ...
 
 ## Contribuciones
 
@@ -52,7 +48,7 @@ Este proyecto está bajo una licencia de uso no comercial. Puedes usar, modifica
 
 ## Autor
 
-Desarrollado por [MakiTazo]
+Desarrollado por MakiTazo
 
 ---
 
