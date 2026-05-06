@@ -72,14 +72,6 @@ class Main(Plugin):
             "description": "Usar el comando /tpa",
             "default": PermissionDefault.TRUE,
         },
-        "endstone_essmakitazo.command.teleport.tpaccept": {
-            "description": "Usar el comando /tpaccept",
-            "default": PermissionDefault.TRUE,
-        },
-        "endstone_essmakitazo.command.teleport.tpdeny": {
-            "description": "Usar el comando /tpadeny",
-            "default": PermissionDefault.TRUE,
-        },
         "endstone_essmakitazo.command.teleport.sethome": {
             "description": "Usar el comando /sethome",
             "default": PermissionDefault.TRUE,
@@ -112,12 +104,6 @@ class Main(Plugin):
             20
         )
         self.register_events(ChunkLeakFixListener(self))
-        self.server.scheduler.run_task(
-            self,
-            self.update_placeholders_task,
-            0,
-            20
-        )
         self.logger.info("✓ Essentials Maki habilitado")
 
     def on_disable(self) -> None:
@@ -129,26 +115,20 @@ class Main(Plugin):
         self.server.scheduler.cancel_tasks(self)
         self.logger.info("✗ Essentials Maki deshabilitado")
 
+    _command_map = {
+        "lobby": lobby_command.execute,
+        "essreload": reload_command.execute,
+        "setspawn": saveloc_commands.set_spawn,
+        "spawn": teleport_commands.spawn,
+        "tpa": teleport_commands.tpa,
+        "home": teleport_commands.home,
+        # "sethome" : teleport_commands.sethome  creando lógica
+    }
+
     def on_command(self, sender: CommandSender, command: Command, args: list[str]) -> bool:
-        if command.name == "lobby":
-            return lobby_command.execute(sender, args, self)
-        elif command.name == "essreload":
-            return reload_command.execute(sender, args, self)
-        elif command.name == "setspawn":
-            return saveloc_commands.set_spawn(sender, args, self)
-        elif command.name == "spawn":
-            return teleport_commands.spawn(sender, args, self)
-        elif command.name == "tpa":
-            return teleport_commands.tpa(sender, args, self)
-        elif command.name == "tpaccept":
-            return teleport_commands.tpa_accept(sender, args, self)
-        elif command.name == "tpdeny":
-            return teleport_commands.tpa_deny(sender, args, self)
-        elif command.name == "sethome":
-            # Añadir feature después
-            return False
-        elif command.name == "home":
-            return teleport_commands.home(sender, args, self)
+        handler = self._command_map.get(command.name)
+        if handler:
+            return handler(sender, args, self)
         return True
 
     on_player_join = server_events.on_player_join
