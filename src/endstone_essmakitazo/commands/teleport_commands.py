@@ -1,10 +1,11 @@
 from endstone.command import CommandSender
 from endstone import Player, ColorFormat
-from endstone.form import ModalForm, Label, Slider, StepSlider, TextInput, Toggle, Divider, Header
 from endstone.level import Location
 from pathlib import Path
 import yaml
 
+# Diccionario para almacenar peticiones activas: {target_player_id: (sender_player, task)}
+tpa_requests = {}
 
 def is_moving(player: Player, start_loc: Location, tolerance: float = 0.1) -> bool:
     loc = player.location
@@ -16,16 +17,66 @@ def is_moving(player: Player, start_loc: Location, tolerance: float = 0.1) -> bo
 
 
 def tpa(sender: CommandSender, args: list[str], plugin) -> bool:
-    """Crear lógica de petición de teleport to user usar 200 gameticks para  (10s de la vida real)"""
+    """
+    Crear petición de teleport a usuario.
+    1. Enviar al target un Form para que acepte o cancele
+    2. Si se acepta hacer lo siguiente:
+       - Crear un Task de movimiento, si el sender se mueve en un timeout de 200 ticks (10 secs) se cancela la tarea.
+       - si el sender o target se desconectan, se cancela la tarea
+       -
+    """
     return True
 
+def tpa_accept(sender: CommandSender, args: list[str], plugin) -> bool:
+    """Aceptar petición de teleport"""
+    if not isinstance(sender, Player):
+        sender.send_message(f"{ColorFormat.RED}Solo los jugadores pueden usar este comando")
+        return False
 
-def tpa_accept(sender: CommandSender, target: Player, plugin) -> bool:
-    """Crear lógica de aceptar petición de otro usuario """
-    return True
+    if sender.id not in tpa_requests:
+        sender.send_message(f"{ColorFormat.RED}No tienes peticiones pendientes")
+        return False
 
-def tpa_deny(sender: CommandSender, target: Player, plugin) -> bool:
-    """Crear lógica de negar petición de otro usuario"""
+    requester, task = tpa_requests[sender.id]
+    task.cancel()
+    del tpa_requests[sender.id]
+
+    # Validar que requester sigue online
+    if requester not in plugin.server.online_players:
+        sender.send_message(f"{ColorFormat.RED}El jugador se desconectó")
+        return False
+
+    try:
+        requester.teleport(sender.location)
+        sender.send_message(f"{ColorFormat.GREEN}¡Aceptaste la petición de {requester.name}!")
+        requester.send_message(f"{ColorFormat.GREEN}¡{sender.name} aceptó tu petición!")
+        return True
+    except Exception as e:
+        sender.send_message(f"{ColorFormat.RED}Error al aceptar petición: {str(e)}")
+        plugin.logger.error(f"Error en tpa_accept: {str(e)}")
+        return False
+
+
+def tpa_deny(sender: CommandSender, args: list[str], plugin) -> bool:
+    """Negar petición de teleport"""
+    if not isinstance(sender, Player):
+        sender.send_message(f"{ColorFormat.RED}Solo los jugadores pueden usar este comando")
+        return False
+
+    if sender.id not in tpa_requests:
+        sender.send_message(f"{ColorFormat.RED}No tienes peticiones pendientes")
+        return False
+
+    requester, task = tpa_requests[sender.id]
+    task.cancel()
+    del tpa_requests[sender.id]
+
+    # Validar que requester sigue online
+    if requester in plugin.server.online_players:
+        requester.send_message(f"{ColorFormat.RED}¡{sender.name} rechazó tu petición!")
+
+    sender.send_message(f"{ColorFormat.RED}¡Rechazaste la petición de {requester.name}!")
+
     return True
 
 def home(sender: CommandSender, args: list[str], plugin) -> bool:
