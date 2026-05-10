@@ -22,7 +22,6 @@ def is_moving(player: Player, start_loc: Location, tolerance: float = 0.1) -> bo
         abs(loc.z - start_loc.z) > tolerance
     )
 
-
 def _start_movement_task(plugin, requester: Player, target: Player):
     start_loc = requester.location
     ticks_elapsed = [0]
