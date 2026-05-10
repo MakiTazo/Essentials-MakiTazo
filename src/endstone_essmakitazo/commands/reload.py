@@ -2,7 +2,10 @@ from endstone import Player, ColorFormat
 from endstone.command import CommandSender
 from endstone.permissions import PermissionDefault
 from endstone_essmakitazo.config.config_loader import load_or_create_config
-from endstone_essmakitazo.utils.scoreboards import load_or_create_scoreboard_config
+from endstone_essmakitazo.utils.scoreboards import (
+    load_or_create_scoreboard_config,
+    update_scoreboard_for_player
+)
 
 command = {
     "essreload": {
@@ -36,6 +39,11 @@ def handler(plugin, sender: CommandSender, args) -> bool:
         load_or_create_scoreboard_config(
             str(plugin.data_folder)
         )
+
+        # Actualizar scoreboards de jugadores online
+        for player in plugin.server.online_players:
+            update_scoreboard_for_player(player, plugin)
+
         sender.send_message(
             f"{ColorFormat.GREEN}"
             "✓ Configuración recargada"
