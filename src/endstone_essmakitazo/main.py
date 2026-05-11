@@ -3,15 +3,15 @@ from endstone.command import Command, CommandSender
 from .commands import preloaded_commands, preloaded_handlers, preloaded_permissions
 from .config import config_loader
 from .utils import scoreboards, fallback_server
-from .events import server_events
+from .events import preloaded_events
 
 class Main(Plugin):
     api_version = "0.11"
     commands = preloaded_commands
     permissions = preloaded_permissions
-    on_player_join = server_events.on_player_join
-    on_player_quit = server_events.on_player_quit
-    on_player_kick = server_events.on_player_kick
+
+    for event_name, event_handler in preloaded_events.items():
+        locals()[event_name] = event_handler
 
     def on_load(self) -> None:
         config_loader.load_or_create_config(str(self.data_folder))
@@ -31,12 +31,7 @@ class Main(Plugin):
         self.logger.info("✓ Essentials Maki habilitado")
 
     def on_disable(self) -> None:
-        try:
-            fallback_server.transferall_fallback_server(self)
-        except Exception as e:
-            self.logger.error(
-                f"Error en fallback al deshabilitar: {e}"
-            )
+        fallback_server.transferall_fallback_server(self)
         self.server.scheduler.cancel_tasks(self)
         self.logger.info("✗ Essentials Maki deshabilitado")
 

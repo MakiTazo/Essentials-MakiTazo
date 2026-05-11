@@ -22,7 +22,6 @@ permissions = {
     }
 }
 
-
 def handler(plugin, sender: CommandSender, args) -> bool:
     if not isinstance(sender, Player):
         sender.send_message(
@@ -31,22 +30,11 @@ def handler(plugin, sender: CommandSender, args) -> bool:
         )
         return False
     try:
-        user_path = (
-            Path(plugin.data_folder) / "userdata"
-        )
-        user_path.mkdir(
-            parents=True,
-            exist_ok=True
-        )
-        user_file = (
-            user_path / f"{sender.unique_id}.yml"
-        )
+        user_path = (Path(plugin.data_folder) / "userdata")
+        user_path.mkdir(parents=True,exist_ok=True)
+        user_file = (user_path / f"{sender.unique_id}.yml")
         if user_file.exists():
-            with open(
-                user_file,
-                "r",
-                encoding="utf-8"
-            ) as file:
+            with open(user_file,"r",encoding="utf-8") as file:
                 config = yaml.safe_load(file) or {}
         else:
             config = {}
@@ -60,11 +48,7 @@ def handler(plugin, sender: CommandSender, args) -> bool:
                 )
             }
         }
-        with open(
-            user_file,
-            "w",
-            encoding="utf-8"
-        ) as file:
+        with open(user_file,"w",encoding="utf-8") as file:
             yaml.dump(
                 config,
                 file,
