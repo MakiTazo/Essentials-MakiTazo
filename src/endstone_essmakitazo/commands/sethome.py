@@ -51,16 +51,9 @@ def handler(plugin, sender: CommandSender, args) -> bool:
             f"{ColorFormat.GREEN}"
             "✓ Hogar establecido"
         )
-        plugin.logger.info(
-            f"{sender.name} estableció su hogar"
-        )
         return True
 
     except Exception as error:
-        sender.send_message(
-            f"{ColorFormat.RED}"
-            f"Error al guardar home: {error}"
-        )
         plugin.logger.error(
             f"Error en sethome: {error}"
         )
