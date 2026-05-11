@@ -1,7 +1,7 @@
 from pathlib import Path
 import yaml
 
-from endstone.event import PlayerKickEvent, PlayerJoinEvent, PlayerQuitEvent, event_handler, PlayerDeathEvent
+from endstone.event import PlayerKickEvent, PlayerJoinEvent, event_handler, PlayerDeathEvent
 from endstone_essmakitazo.utils import fallback_server, scoreboards
 from endstone import ColorFormat
 
