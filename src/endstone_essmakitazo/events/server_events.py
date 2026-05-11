@@ -31,9 +31,7 @@ def on_player_death(self, event: PlayerDeathEvent):
                 "x": round(player.location.x, 2),
                 "y": round(player.location.y, 2),
                 "z": round(player.location.z, 2),
-                "dimension": str(
-                    player.location.dimension.name
-                )
+                "dimension": str(player.location.dimension.name)
             }
         }
         with open(user_file,"w",encoding="utf-8") as file:

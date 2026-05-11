@@ -8,13 +8,12 @@ from endstone.permissions import PermissionDefault
 command = {
     "sethome": {
         "description": "Establece tu hogar",
-        "usages": ["/sethome"],
+        "usages": ["/sethome <name: string>"],
         "permissions": [
             "endstone_essmakitazo.command.teleport.sethome"
         ],
     }
 }
-
 permissions = {
     "endstone_essmakitazo.command.teleport.sethome": {
         "description": "Usar el comando /sethome",
@@ -33,28 +32,21 @@ def handler(plugin, sender: CommandSender, args) -> bool:
         user_path = (Path(plugin.data_folder) / "userdata")
         user_path.mkdir(parents=True,exist_ok=True)
         user_file = (user_path / f"{sender.unique_id}.yml")
+        home_name = args[0] if len(args) > 0 else "default"
         if user_file.exists():
             with open(user_file,"r",encoding="utf-8") as file:
                 config = yaml.safe_load(file) or {}
         else:
             config = {}
-        config["home"] = {
-            "location": {
-                "x": round(sender.location.x, 2),
-                "y": round(sender.location.y, 2),
-                "z": round(sender.location.z, 2),
-                "dimension": str(
-                    sender.location.dimension.name
-                )
-            }
+        config.setdefault("home", {})
+        config["home"][home_name] = {
+            "x": round(sender.location.x, 2),
+            "y": round(sender.location.y, 2),
+            "z": round(sender.location.z, 2),
+            "dimension": str(sender.location.dimension.name)
         }
         with open(user_file,"w",encoding="utf-8") as file:
-            yaml.dump(
-                config,
-                file,
-                allow_unicode=True,
-                default_flow_style=False
-            )
+            yaml.dump(config,file,allow_unicode=True,default_flow_style=False)
         sender.send_message(
             f"{ColorFormat.GREEN}"
             "✓ Hogar establecido"
