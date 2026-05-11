@@ -9,7 +9,7 @@ from .spawn import handler as spawn_handler
 command = {
     "home": {
         "description": "Vas a tu hogar",
-        "usages": ["/home <name: string>"],
+        "usages": ["/home <name: string>", "/home"],
         "permissions": [
             "endstone_essmakitazo.command.teleport.home"
         ],

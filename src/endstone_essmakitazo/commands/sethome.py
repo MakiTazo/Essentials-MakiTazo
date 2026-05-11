@@ -8,7 +8,7 @@ from endstone.permissions import PermissionDefault
 command = {
     "sethome": {
         "description": "Establece tu hogar",
-        "usages": ["/sethome <name: string>"],
+        "usages": ["/sethome <name: string>", "/sethome"],
         "permissions": [
             "endstone_essmakitazo.command.teleport.sethome"
         ],
