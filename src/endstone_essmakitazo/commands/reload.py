@@ -33,22 +33,15 @@ def handler(plugin, sender: CommandSender, args) -> bool:
         )
         return False
     try:
-        load_or_create_config(
-            str(plugin.data_folder)
-        )
-        load_or_create_scoreboard_config(
-            str(plugin.data_folder)
-        )
+        load_or_create_config(str(plugin.data_folder))
+        load_or_create_scoreboard_config(str(plugin.data_folder))
         for player in plugin.server.online_players:
             update_scoreboard_for_player(player, plugin)
-
         sender.send_message(
             f"{ColorFormat.GREEN}"
             "✓ Configuración recargada"
         )
-        plugin.logger.info(
-            f"{sender.name} recargó la configuración"
-        )
+        plugin.logger.info(f"{sender.name} recargó la configuración")
         return True
 
     except Exception as error:
@@ -56,7 +49,5 @@ def handler(plugin, sender: CommandSender, args) -> bool:
             f"{ColorFormat.RED}"
             f"Error al recargar: {error}"
         )
-        plugin.logger.error(
-            f"Error en reload_command: {error}"
-        )
+        plugin.logger.error(f"Error en reload_command: {error}")
         return False
