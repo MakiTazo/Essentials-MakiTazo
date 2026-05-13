@@ -1,3 +1,4 @@
+import asyncio
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
 from .commands import preloaded_commands, preloaded_handlers, preloaded_permissions
@@ -20,14 +21,19 @@ class Main(Plugin):
 
     def on_enable(self) -> None:
         self.register_events(self)
+        economy_plugin = self.server.plugin_manager.get_plugin("jweconomy")
+        if economy_plugin:
+            self.economy_api = economy_plugin.get_api()
+            self.logger.info("✓ API de JWEconomy integrada")
+        else:
+            self.economy_api = None
+            self.logger.warning("JWEconomy no encontrado, placeholders de economía deshabilitados")
         self.server.scheduler.run_task(
             self,
             self.update_placeholders_task,
             delay=0,
             period=20
         )
-        # TODO: Agregar un ChunkLeakFixer
-        # self.register_events(ChunkLeakFixListener(self))
         self.logger.info("✓ Essentials Maki habilitado")
 
     def on_disable(self) -> None:
@@ -44,17 +50,15 @@ class Main(Plugin):
         handler = preloaded_handlers.get(command.name)
         if handler:
             return handler(self, sender, args)
-
         return False
 
     def update_placeholders_task(self) -> None:
         try:
+            loop = asyncio.new_event_loop()
             for player in self.server.online_players:
-                scoreboards.update_scoreboard_for_player(
-                    player,
-                    self
+                loop.run_until_complete(
+                    scoreboards.update_scoreboard_for_player(player, self)
                 )
+            loop.close()
         except Exception as e:
-            self.logger.error(
-                f"Error actualizando scoreboards: {e}"
-            )
+            self.logger.error(f"Error actualizando scoreboards: {e}")

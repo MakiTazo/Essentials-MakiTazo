@@ -1,3 +1,4 @@
+import asyncio
 from endstone import Player, ColorFormat
 from endstone.command import CommandSender
 from endstone.permissions import PermissionDefault
@@ -35,8 +36,12 @@ def handler(plugin, sender: CommandSender, args) -> bool:
     try:
         load_or_create_config(str(plugin.data_folder))
         load_or_create_scoreboard_config(str(plugin.data_folder))
+        loop = asyncio.new_event_loop()
         for player in plugin.server.online_players:
-            update_scoreboard_for_player(player, plugin)
+            loop.run_until_complete(
+                update_scoreboard_for_player(player, plugin)
+            )
+        loop.close()
         sender.send_message(
             f"{ColorFormat.GREEN}"
             "✓ Configuración recargada"

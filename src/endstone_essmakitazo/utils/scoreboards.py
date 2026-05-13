@@ -15,6 +15,7 @@ DEFAULT_SCOREBOARD_CONFIG = {
                     "⟡ ᴏɴʟɪɴᴇ: %online%",
                     "⟡ ᴘɪɴɢ: %ping%ms",
                     "⟡ ᴛᴘs: %tps%",
+                    "⟡ ʙᴀʟᴀɴᴄᴇ: %balance%",
                     "",
                     ">____________<",
                     "⟡ domain.name"
@@ -55,12 +56,19 @@ def load_or_create_scoreboard_config(plugin_data_folder: str) -> dict:
         SCOREBOARD_CACHE = DEFAULT_SCOREBOARD_CONFIG
     return SCOREBOARD_CACHE
 
-def replace_placeholders(line: str,player: Player,plugin) -> str:
+async def replace_placeholders(line: str, player: Player, plugin) -> str:
     online_players = len(plugin.server.online_players)
     tps = round(plugin.server.current_tps)
     line = line.replace("%online%", str(online_players))
     line = line.replace("%ping%", str(player.ping))
     line = line.replace("%tps%", str(tps))
+    if plugin.economy_api is not None:
+        try:
+            balance = await plugin.economy_api.get_balance(str(player.unique_id))
+            symbol = plugin.economy_api.currency_symbol
+            line = line.replace("%balance%", f"{symbol}{balance}")
+        except Exception:
+            line = line.replace("%balance%", "N/A")
     return line
 
 def get_active_scoreboard_name(config: dict) -> str:
@@ -71,9 +79,9 @@ def get_active_scoreboard_name(config: dict) -> str:
         else "default"
     )
 
-def create_scoreboard_for_player(player: Player,plugin):
+async def create_scoreboard_for_player(player: Player, plugin):
     config = SCOREBOARD_CACHE
-    if not config.get("scoreboard",{}).get("enabled", False):
+    if not config.get("scoreboard", {}).get("enabled", False):
         return
     board = player.scoreboard
     scoreboard_name = f"sb_{player.name}"
@@ -82,24 +90,20 @@ def create_scoreboard_for_player(player: Player,plugin):
     existing_obj = board.get_objective(scoreboard_name)
     if existing_obj:
         return
-    title = scoreboard_config.get("title","Essmakitazo")
+    title = scoreboard_config.get("title", "Essmakitazo")
     lines = scoreboard_config.get("lines", [])
-    obj = board.add_objective(scoreboard_name,Criteria.DUMMY,title)
+    obj = board.add_objective(scoreboard_name, Criteria.DUMMY, title)
     obj.set_display(DisplaySlot.SIDE_BAR)
     for idx, line in enumerate(lines):
         display_text = (
-            replace_placeholders(
-                line,
-                player,
-                plugin
-            )
+            await replace_placeholders(line, player, plugin)
             if line
             else " " * (idx + 1)
         )
         score = obj.get_score(display_text)
         score.value = idx + 1
 
-def update_scoreboard_for_player(player: Player, plugin):
+async def update_scoreboard_for_player(player: Player, plugin):
     config = SCOREBOARD_CACHE
     if not config.get("scoreboard", {}).get("enabled", False):
         return
@@ -114,4 +118,4 @@ def update_scoreboard_for_player(player: Player, plugin):
     obj = board.get_objective(scoreboard_name)
     if obj:
         obj.unregister()
-    create_scoreboard_for_player(player, plugin)
+    await create_scoreboard_for_player(player, plugin)
