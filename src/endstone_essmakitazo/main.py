@@ -10,10 +10,8 @@ class Main(Plugin):
     api_version = "0.11"
     commands = preloaded_commands
     permissions = preloaded_permissions
-
     for event_name, event_handler in preloaded_events.items():
         locals()[event_name] = event_handler
-
     def on_load(self) -> None:
         config_loader.load_or_create_config(str(self.data_folder))
         scoreboards.load_or_create_scoreboard_config(str(self.data_folder))
@@ -41,12 +39,7 @@ class Main(Plugin):
         self.server.scheduler.cancel_tasks(self)
         self.logger.info("✗ Essentials Maki deshabilitado")
 
-    def on_command(
-        self,
-        sender: CommandSender,
-        command: Command,
-        args: list[str]
-    ) -> bool:
+    def on_command(self,sender: CommandSender,command: Command,args: list[str]) -> bool:
         handler = preloaded_handlers.get(command.name)
         if handler:
             return handler(self, sender, args)
