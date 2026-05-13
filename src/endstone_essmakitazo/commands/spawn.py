@@ -26,65 +26,53 @@ permissions = {
 
 def handler(plugin, sender: CommandSender, args) -> bool:
     if not isinstance(sender, Player):
-        sender.send_message(
-            f"{ColorFormat.RED}"
-            "Solo los jugadores pueden usar este comando"
-        )
+        sender.send_message(f"{ColorFormat.RED}Solo los jugadores pueden usar este comando")
         return False
 
     try:
-        config_path = (
-            Path(plugin.data_folder) / "config.yml"
-        )
-
-        with open(
-            config_path,
-            "r",
-            encoding="utf-8"
-        ) as file:
+        config_path = Path(plugin.data_folder) / "config.yml"
+        with open(config_path, "r", encoding="utf-8") as file:
             config = yaml.safe_load(file)
-        spawn_data = (
-            config.get("spawn", {})
-            .get("location")
-        )
+        spawn_data = config.get("spawn", {}).get("location")
         if not spawn_data:
-            sender.send_message(
-                f"{ColorFormat.RED}"
-                "El spawn no ha sido establecido"
-            )
+            sender.send_message(f"{ColorFormat.RED}El spawn no ha sido establecido")
             return False
+
+        user_path = Path(plugin.data_folder) / "userdata"
+        user_path.mkdir(parents=True, exist_ok=True)
+        user_file = user_path / f"{sender.unique_id}.yml"
+
+        if user_file.exists():
+            with open(user_file, "r", encoding="utf-8") as file:
+                user_config = yaml.safe_load(file) or {}
+        else:
+            user_config = {}
+
+        user_config["last_position"] = {
+            "location": {
+                "x": round(sender.location.x, 2),
+                "y": round(sender.location.y, 2),
+                "z": round(sender.location.z, 2),
+                "dimension": str(sender.location.dimension.name)
+            }
+        }
+
         x = spawn_data.get("x")
         y = spawn_data.get("y")
         z = spawn_data.get("z")
-        dimension_id = spawn_data.get(
-            "dimension",
-            "minecraft:overworld"
-        )
+        dimension_id = spawn_data.get("dimension", "minecraft:overworld")
         level = plugin.server.level
-        dimension = level.get_dimension(
-            dimension_id
-        )
-        spawn_location = Location(
-            dimension,
-            x,
-            y,
-            z
-        )
+        dimension = level.get_dimension(dimension_id)
+        spawn_location = Location(dimension, x, y, z)
         sender.teleport(spawn_location)
-        sender.send_message(
-            f"{ColorFormat.GREEN}"
-            "¡Te has transportado al spawn!"
-        )
+
+        with open(user_file, "w", encoding="utf-8") as file:
+            yaml.dump(user_config, file, allow_unicode=True, default_flow_style=False)
+
+        sender.send_message(f"{ColorFormat.GREEN}¡Te has transportado al spawn!")
         return True
 
     except Exception as error:
-        sender.send_message(
-            f"{ColorFormat.RED}"
-            f"Error al transportarse al spawn: "
-            f"{error}"
-        )
-        plugin.logger.error(
-            f"Error en spawn_command: {error}"
-        )
-
+        sender.send_message(f"{ColorFormat.RED}Error al transportarse al spawn: {error}")
+        plugin.logger.error(f"Error en spawn_command: {error}")
         return False

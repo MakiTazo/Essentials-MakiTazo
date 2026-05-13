@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 import yaml
 
-from endstone.event import PlayerKickEvent, PlayerJoinEvent, event_handler, PlayerDeathEvent
+from endstone.event import PlayerKickEvent, PlayerJoinEvent, event_handler, PlayerDeathEvent, PlayerTeleportEvent
 from endstone_essmakitazo.utils import fallback_server, scoreboards
 from endstone import ColorFormat
 
@@ -48,5 +48,13 @@ def on_player_death(self, event: PlayerDeathEvent):
             f"{ColorFormat.RED}"
             "✓ Has muerto, puedes volver con /back"
         )
+    except Exception as e:
+        self.logger.error(e)
+
+@event_handler
+def on_player_teleport(self, event: PlayerTeleportEvent):
+    try:
+        player = event.player
+        player.perform_command("effect @s resistance 10 100 true")
     except Exception as e:
         self.logger.error(e)
