@@ -7,17 +7,6 @@ from endstone_essmakitazo.utils import fallback_server, scoreboards
 from endstone import ColorFormat
 
 @event_handler
-def on_player_join(self, event: PlayerJoinEvent):
-    try:
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(
-            scoreboards.create_scoreboard_for_player(event.player, self)
-        )
-        loop.close()
-    except Exception as e:
-        self.logger.error(f"Error al crear scoreboard para {event.player.name}: {e}")
-
-@event_handler
 def on_player_kick(self, event: PlayerKickEvent):
     player = event.player
     fallback_server.transfer_fallback_server(self, player)

@@ -1,12 +1,11 @@
 from endstone import Player
-from endstone.scoreboard import DisplaySlot, Criteria
 from pathlib import Path
 import yaml
 
 DEFAULT_SCOREBOARD_CONFIG = {
     "scoreboard": {
         "enabled": True,
-        "is_hidden": False,
+        "border": False,
         "scoreboards": {
             "default": {
                 "title": "Essmakitazo",
@@ -66,56 +65,48 @@ async def replace_placeholders(line: str, player: Player, plugin) -> str:
         try:
             balance = await plugin.economy_api.get_balance(str(player.unique_id))
             symbol = plugin.economy_api.currency_symbol
-            line = line.replace("%balance%", f"{symbol}{balance}")
-        except Exception:
+            line = line.replace("%balance%", f"{symbol}{balance:.2f}")
+        except Exception as e:
             line = line.replace("%balance%", "N/A")
+            plugin.logger.info(f"{e}")
     return line
 
 def get_active_scoreboard_name(config: dict) -> str:
-    scoreboards = (config.get("scoreboard", {}).get("scoreboards", {}))
-    return (
-        next(iter(scoreboards.keys()))
-        if scoreboards
-        else "default"
-    )
+    scoreboards = config.get("scoreboard", {}).get("scoreboards", {})
+    return next(iter(scoreboards.keys())) if scoreboards else "default"
 
-async def create_scoreboard_for_player(player: Player, plugin):
+
+def build_scoreboard_text(title: str,lines: list[str],use_border: bool = True,show_logo: bool = True) -> str:
+    header = "§s§c§o§r§e§b§o§a§r§d§r"
+    border = (
+        "§w§b§p§a§o§r"
+        if use_border
+        else "§n§b§p§a§o§r"
+    )
+    logo = "§l§o§g§o§r" if show_logo else ""
+    content = [header, border, logo, title]
+    for line in lines:
+        content.append(line if line else " ")
+    return "\n".join(content)
+
+async def show_scoreboard_for_player(player: Player, plugin):
     config = SCOREBOARD_CACHE
     if not config.get("scoreboard", {}).get("enabled", False):
         return
-    board = player.scoreboard
-    scoreboard_name = f"sb_{player.name}"
     default_score = get_active_scoreboard_name(config)
-    scoreboard_config = (config.get("scoreboard", {}).get("scoreboards", {}).get(default_score, {}))
-    existing_obj = board.get_objective(scoreboard_name)
-    if existing_obj:
-        return
+    scoreboard_config = config.get("scoreboard", {}).get("scoreboards", {}).get(default_score, {})
+    lines_config = scoreboard_config.get("lines", [])
     title = scoreboard_config.get("title", "Essmakitazo")
-    lines = scoreboard_config.get("lines", [])
-    obj = board.add_objective(scoreboard_name, Criteria.DUMMY, title)
-    obj.set_display(DisplaySlot.SIDE_BAR)
-    for idx, line in enumerate(lines):
-        display_text = (
-            await replace_placeholders(line, player, plugin)
-            if line
-            else " " * (idx + 1)
-        )
-        score = obj.get_score(display_text)
-        score.value = idx + 1
+    use_border = config.get("scoreboard", {}).get("border", True)
+    formatted_lines = []
+    for line in lines_config:
+        if line:
+            display_text = await replace_placeholders(line, player, plugin)
+            formatted_lines.append(display_text)
+        else:
+            formatted_lines.append(" ")
+    scoreboard_text = build_scoreboard_text(title, formatted_lines, use_border=use_border, show_logo=True)
+    player.send_title(scoreboard_text, "", fade_in=0, stay=999999, fade_out=0)
 
-async def update_scoreboard_for_player(player: Player, plugin):
-    config = SCOREBOARD_CACHE
-    if not config.get("scoreboard", {}).get("enabled", False):
-        return
-    board = player.scoreboard
-    scoreboard_name = f"sb_{player.name}"
-    default_score = get_active_scoreboard_name(config)
-    scoreboard_config = (
-        config.get("scoreboard", {})
-        .get("scoreboards", {})
-        .get(default_score, {})
-    )
-    obj = board.get_objective(scoreboard_name)
-    if obj:
-        obj.unregister()
-    await create_scoreboard_for_player(player, plugin)
+def remove_scoreboard_for_player(player: Player):
+    player.reset_title()

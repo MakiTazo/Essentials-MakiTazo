@@ -30,7 +30,7 @@ class Main(Plugin):
             self,
             self.update_placeholders_task,
             delay=0,
-            period=20
+            period=1
         )
         self.logger.info("✓ Essentials Maki habilitado")
 
@@ -47,11 +47,9 @@ class Main(Plugin):
 
     def update_placeholders_task(self) -> None:
         try:
-            loop = asyncio.new_event_loop()
             for player in self.server.online_players:
-                loop.run_until_complete(
-                    scoreboards.update_scoreboard_for_player(player, self)
-                )
-            loop.close()
+                loop = asyncio.new_event_loop()
+                loop.run_until_complete(scoreboards.show_scoreboard_for_player(player, self))
+                loop.close()
         except Exception as e:
             self.logger.error(f"Error actualizando scoreboards: {e}")

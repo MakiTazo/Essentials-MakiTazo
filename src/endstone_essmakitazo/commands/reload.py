@@ -5,7 +5,7 @@ from endstone.permissions import PermissionDefault
 from endstone_essmakitazo.config.config_loader import load_or_create_config
 from endstone_essmakitazo.utils.scoreboards import (
     load_or_create_scoreboard_config,
-    update_scoreboard_for_player
+    show_scoreboard_for_player
 )
 
 command = {
@@ -39,7 +39,7 @@ def handler(plugin, sender: CommandSender, args) -> bool:
         loop = asyncio.new_event_loop()
         for player in plugin.server.online_players:
             loop.run_until_complete(
-                update_scoreboard_for_player(player, plugin)
+                show_scoreboard_for_player(player, plugin)
             )
         loop.close()
         sender.send_message(
