@@ -76,17 +76,13 @@ def get_active_scoreboard_name(config: dict) -> str:
     return next(iter(scoreboards.keys())) if scoreboards else "default"
 
 
-def build_scoreboard_text(title: str,lines: list[str],use_border: bool = True,show_logo: bool = True) -> str:
+def build_scoreboard_text(title: str, lines: list[str], use_border: bool = True, show_logo: bool = True) -> str:
     header = "§s§c§o§r§e§b§o§a§r§d§r"
-    border = (
-        "§w§b§p§a§o§r"
-        if use_border
-        else "§n§b§p§a§o§r"
-    )
+    border = "§w§b§p§a§o§r" if use_border else "§n§b§p§a§o§r"
     logo = "§l§o§g§o§r" if show_logo else ""
-    content = [header, border, logo, title]
+    content = [header, border, logo, f"{title}§r"]
     for line in lines:
-        content.append(line if line else " ")
+        content.append(f"{line}§r" if line else " §r")
     return "\n".join(content)
 
 async def show_scoreboard_for_player(player: Player, plugin):
