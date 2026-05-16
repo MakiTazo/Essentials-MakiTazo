@@ -62,14 +62,14 @@ async def replace_placeholders(line: str, player: Player, plugin) -> str:
     line = line.replace("%online%", str(online_players))
     line = line.replace("%ping%", str(player.ping))
     line = line.replace("%tps%", str(tps))
-    if plugin.economy_api is not None:
+    economy_plugin = plugin.server.plugin_manager.get_plugin("jweconomy")
+    if economy_plugin and hasattr(economy_plugin, "economy_api"):
         try:
-            balance = await plugin.economy_api.get_balance(str(player.unique_id))
-            symbol = plugin.economy_api.currency_symbol
+            balance = await economy_plugin.economy_api.get_balance(str(player.unique_id))
+            symbol = economy_plugin.economy_api.currency_symbol
             line = line.replace("%balance%", f"{symbol}{balance:.2f}")
         except Exception as e:
             line = line.replace("%balance%", "N/A")
-            plugin.logger.info(f"{e}")
     return line
 
 def get_active_scoreboard_name(config: dict) -> str:

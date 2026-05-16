@@ -20,12 +20,7 @@ class Main(Plugin):
     def on_enable(self) -> None:
         self.register_events(self)
         economy_plugin = self.server.plugin_manager.get_plugin("jweconomy")
-        if economy_plugin:
-            self.economy_api = economy_plugin.get_api()
-            self.logger.info("✓ API de JWEconomy integrada")
-        else:
-            self.economy_api = None
-            self.logger.warning("JWEconomy no encontrado, placeholders de economía deshabilitados")
+        self.economy_api = None
         self.server.scheduler.run_task(
             self,
             self.update_placeholders_task,
