@@ -6,6 +6,7 @@ DEFAULT_SCOREBOARD_CONFIG = {
     "scoreboard": {
         "enabled": True,
         "border": False,
+        "logo": False,
         "scoreboards": {
             "default": {
                 "title": "Essmakitazo",
@@ -77,10 +78,10 @@ def get_active_scoreboard_name(config: dict) -> str:
 
 
 def build_scoreboard_text(title: str, lines: list[str], use_border: bool = True, show_logo: bool = True) -> str:
-    header = "§s§c§o§r§e§b§o§a§r§d§r"
-    border = "§w§b§p§a§o§r" if use_border else "§n§b§p§a§o§r"
-    logo = "§l§o§g§o§r" if show_logo else ""
-    content = [header, border, logo, f"{title}§r"]
+    content = ["§s§c§o§r§e§b§o§a§r§d§r", "§w§b§p§a§o§r" if use_border else "§n§b§p§a§o§r"]
+    if show_logo:
+        content.append("§l§o§g§o§r")
+    content.append(f"{title}§r")
     for line in lines:
         content.append(f"{line}§r" if line else " §r")
     return "\n".join(content)
@@ -94,6 +95,7 @@ async def show_scoreboard_for_player(player: Player, plugin):
     lines_config = scoreboard_config.get("lines", [])
     title = scoreboard_config.get("title", "Essmakitazo")
     use_border = config.get("scoreboard", {}).get("border", True)
+    use_logo = config.get("scoreboard", {}).get("logo", True)
     formatted_lines = []
     for line in lines_config:
         if line:
@@ -101,7 +103,7 @@ async def show_scoreboard_for_player(player: Player, plugin):
             formatted_lines.append(display_text)
         else:
             formatted_lines.append(" ")
-    scoreboard_text = build_scoreboard_text(title, formatted_lines, use_border=use_border, show_logo=True)
+    scoreboard_text = build_scoreboard_text(title, formatted_lines, use_border=use_border, show_logo=use_logo)
     player.send_title(scoreboard_text, "", fade_in=0, stay=999999, fade_out=0)
 
 def remove_scoreboard_for_player(player: Player):
