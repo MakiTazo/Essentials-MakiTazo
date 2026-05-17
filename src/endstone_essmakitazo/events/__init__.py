@@ -4,4 +4,5 @@ preloaded_events = {
     "on_player_kick": server_events.on_player_kick,
     "on_player_death": server_events.on_player_death,
     "on_player_teleport": server_events.on_player_teleport,
+    "on_player_chat": server_events.on_player_chat,
 }

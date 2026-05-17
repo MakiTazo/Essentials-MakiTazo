@@ -1,9 +1,8 @@
-import asyncio
 from pathlib import Path
 import yaml
 
-from endstone.event import PlayerKickEvent, PlayerJoinEvent, event_handler, PlayerDeathEvent, PlayerTeleportEvent
-from endstone_essmakitazo.utils import fallback_server, scoreboards
+from endstone.event import PlayerKickEvent, event_handler, PlayerDeathEvent, PlayerTeleportEvent, PlayerChatEvent
+from endstone_essmakitazo.utils import fallback_server
 from endstone import ColorFormat
 
 @event_handler
@@ -44,6 +43,17 @@ def on_player_death(self, event: PlayerDeathEvent):
 def on_player_teleport(self, event: PlayerTeleportEvent):
     try:
         player = event.player
-        player.perform_command("effect @s resistance 10 100 true")
+        self.server.dispatch_command(
+            self.server.command_sender,
+            f"effect {player.name} resistance 10 5 true"
+        )
     except Exception as e:
         self.logger.error(e)
+
+@event_handler
+def on_player_chat(self, event: PlayerChatEvent):
+    event.cancel()
+    msg = event.message
+    sender = event.player
+    for player in self.server.online_players:
+        player.send_message(f"{sender.name}: {msg}")

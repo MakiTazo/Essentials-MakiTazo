@@ -10,14 +10,14 @@ class Main(Plugin):
     api_version = "0.11"
     commands = preloaded_commands
     permissions = preloaded_permissions
-    for event_name, event_handler in preloaded_events.items():
-        locals()[event_name] = event_handler
     def on_load(self) -> None:
         config_loader.load_or_create_config(str(self.data_folder))
         scoreboards.load_or_create_scoreboard_config(str(self.data_folder))
         self.logger.info("✓ Configuración cargada")
 
     def on_enable(self) -> None:
+        for event_name, event_handler in preloaded_events.items():
+            setattr(self, event_name, event_handler.__get__(self, type(self)))
         self.register_events(self)
         economy_plugin = self.server.plugin_manager.get_plugin("jweconomy")
         self.economy_api = None
