@@ -1,9 +1,7 @@
 # Endstone Essentials Plugin
-
 Plugin for Endstone that adds classic *Essentials*-style features such as `/home`, `/tpa`, `/rtp`, `/back`, `/spawn`, and other utilities designed to improve the server experience.
 
 ## Features
-
 * Home system (`/sethome`, `/home`, `/delhome`)
 * Player teleportation requests (`/tpa`, `/tpaccept`, `/tpdeny`)
 * Random teleportation (`/rtp`) with configurable radius
@@ -16,7 +14,6 @@ Plugin for Endstone that adds classic *Essentials*-style features such as `/home
 * Automatic saving of the last position on death or teleport
 
 ## Commands
-
 | Command      | Description                                             |
 | ------------ | ------------------------------------------------------- |
 | `/sethome`   | Set your home                                           |
@@ -32,25 +29,21 @@ Plugin for Endstone that adds classic *Essentials*-style features such as `/home
 | `/essreload` | Reload the plugin configuration                         |
 
 ## Installation
-
 1. Download the plugin
 2. Place the file in your Endstone server `plugins/` folder
 3. Restart the server
 
 ## Dependencies
-
 * **Endstone** v0.11 or higher
 * **[JWEconomy](https://endgit.dev/plugins/jweconomy)** (optional): Used to display balance on the scoreboard
 
 ## Configuration
-
 The plugin will automatically generate configuration files in the corresponding folder:
 
 * `config.yml`: General configuration (spawn, RTP, etc.)
 * `scoreboard.yml`: Scoreboard configuration (title, lines, placeholders)
 
 ### Scoreboard Placeholders
-
 | Placeholder | Description                             |
 | ----------- | --------------------------------------- |
 | `%online%`  | Connected players                       |
@@ -59,7 +52,6 @@ The plugin will automatically generate configuration files in the corresponding 
 | `%balance%` | JWEconomy balance (requires the plugin) |
 
 ### RTP Configuration
-
 In `config.yml` you can adjust the RTP radius values:
 
 ```yaml
@@ -69,7 +61,6 @@ rtp:
 ```
 
 ### Roadmap
-
 | Feature  | Description                                                      |
 | -------- | ---------------------------------------------------------------- |
 | `warps`  | Public warp system (Probably will not be added)                  |
@@ -77,15 +68,12 @@ rtp:
 | `vanish` | Become invisible/invulnerable and disappear from the player list |
 
 ### Contributions
-
 Contributions are welcome. You can fork the repository and submit a pull request with your improvements.
 
 ### License
-
 This project is licensed under a non-commercial use license. You are free to use, modify, and share the code, but selling or using it for commercial purposes without the author's permission is not allowed.
 
 ### Author
-
 Developed by MakiTazo
 
 > If you have suggestions or find bugs, feel free to open an issue.
