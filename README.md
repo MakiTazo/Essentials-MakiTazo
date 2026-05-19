@@ -1,86 +1,91 @@
 # Endstone Essentials Plugin
 
-Plugin para Endstone que añade funcionalidades clásicas estilo *Essentials* como `/home`, `/tpa`, `/rtp`, `/back`, `/spawn` y más utilidades pensadas para mejorar la experiencia en servidores.
+Plugin for Endstone that adds classic *Essentials*-style features such as `/home`, `/tpa`, `/rtp`, `/back`, `/spawn`, and other utilities designed to improve the server experience.
 
-## Características
+## Features
 
-* Sistema de homes (`/sethome`, `/home`, `/delhome`)
-* Teletransportación entre jugadores (`/tpa`, `/tpaccept`, `/tpdeny`)
-* Teletransporte aleatorio (`/rtp`) con radio configurable
-* Volver a la última posición (`/back`)
-* Sistema de spawn (`/spawn`, `/setspawn`)
-* Scoreboard dinámico con placeholders (online, ping, TPS, economía)
-* Integración con JWEconomy para mostrar balance en scoreboard
-* Recarga de configuración en caliente (`/essreload`)
-* Protección contra caídas en RTP
-* Guardado automático de última posición al morir o teletransportarse
+* Home system (`/sethome`, `/home`, `/delhome`)
+* Player teleportation requests (`/tpa`, `/tpaccept`, `/tpdeny`)
+* Random teleportation (`/rtp`) with configurable radius
+* Return to your last location (`/back`)
+* Spawn system (`/spawn`, `/setspawn`)
+* Dynamic scoreboard with placeholders (online players, ping, TPS, economy)
+* Integration with JWEconomy to display balance on the scoreboard
+* Hot configuration reload (`/essreload`)
+* RTP fall protection
+* Automatic saving of the last position on death or teleport
 
-## Comandos
+## Commands
 
-| Comando         | Descripción                                    |
-| --------------- | ---------------------------------------------- |
-| `/sethome`      | Establece tu hogar                             |
-| `/home`         | Abre formulario para teletransportarte a tus homes |
-| `/delhome`      | Elimina un home                                |
-| `/tpa`          | Abre formulario para solicitar teletransporte  |
-| `/tpaccept`     | Acepta una solicitud de TPA                    |
-| `/tpdeny`       | Rechaza una solicitud de TPA                   |
-| `/back`         | Vuelve a tu última posición antes de un teleport o muerte |
-| `/spawn`        | Teletransporte al spawn del servidor           |
-| `/setspawn`     | Establece el punto de spawn                    |
-| `/rtp`          | Teletransporte aleatorio en el Overworld       |
-| `/essreload`    | Recarga la configuración del plugin            |
+| Command      | Description                                             |
+| ------------ | ------------------------------------------------------- |
+| `/sethome`   | Set your home                                           |
+| `/home`      | Open a form to teleport to your homes                   |
+| `/delhome`   | Delete a home                                           |
+| `/tpa`       | Open a form to request teleportation                    |
+| `/tpaccept`  | Accept a TPA request                                    |
+| `/tpdeny`    | Deny a TPA request                                      |
+| `/back`      | Return to your last position before a teleport or death |
+| `/spawn`     | Teleport to the server spawn                            |
+| `/setspawn`  | Set the spawn point                                     |
+| `/rtp`       | Random teleport in the Overworld                        |
+| `/essreload` | Reload the plugin configuration                         |
 
-## Instalación
+## Installation
 
-1. Descarga el plugin
-2. Coloca el archivo en la carpeta `plugins/` de tu servidor Endstone
-3. Reinicia el servidor
+1. Download the plugin
+2. Place the file in your Endstone server `plugins/` folder
+3. Restart the server
 
-## Dependencias
+## Dependencies
 
-* **Endstone** v0.11 o superior
-* **[JWEconomy](https://endgit.dev/plugins/jweconomy)** (opcional): Para mostrar el balance en el scoreboard
+* **Endstone** v0.11 or higher
+* **[JWEconomy](https://endgit.dev/plugins/jweconomy)** (optional): Used to display balance on the scoreboard
 
-## Configuración
+## Configuration
 
-El plugin generará automáticamente los archivos de configuración en la carpeta correspondiente:
+The plugin will automatically generate configuration files in the corresponding folder:
 
-* `config.yml`: Configuración general (spawn, RTP, etc.)
-* `scoreboard.yml`: Configuración del scoreboard (título, líneas, placeholders)
+* `config.yml`: General configuration (spawn, RTP, etc.)
+* `scoreboard.yml`: Scoreboard configuration (title, lines, placeholders)
 
-### Placeholders del Scoreboard
+### Scoreboard Placeholders
 
-| Placeholder  | Descripción                  |
-| ------------ | ---------------------------- |
-| `%online%`   | Jugadores conectados         |
-| `%ping%`     | Ping del jugador en ms       |
-| `%tps%`      | TPS actual del servidor      |
-| `%balance%`  | Balance de JWEconomy (requiere el plugin) |
+| Placeholder | Description                             |
+| ----------- | --------------------------------------- |
+| `%online%`  | Connected players                       |
+| `%ping%`    | Player ping in ms                       |
+| `%tps%`     | Current server TPS                      |
+| `%balance%` | JWEconomy balance (requires the plugin) |
 
-### Configuración de RTP
+### RTP Configuration
 
-En `config.yml` puedes ajustar los radios del RTP:
+In `config.yml` you can adjust the RTP radius values:
 
 ```yaml
 rtp:
   min_radius: 1000
   max_radius: 5000
 ```
+
 ### Roadmap
-| Placeholder | Descripción                                                       |
-|-------------|-------------------------------------------------------------------|
-| `warps`     | Sistema de warps públicos (Probablemente no se añada)             |
-| `invsee`    | Para monitorizar inventarios                                      |
-| `vanish`    | Desaparece de la lista de jugadores y eres invisible/Invulnerable |
 
-### Contribuciones
-Las contribuciones son bienvenidas. Puedes hacer un fork del repositorio y enviar un pull request con tus mejoras.
+| Feature  | Description                                                      |
+| -------- | ---------------------------------------------------------------- |
+| `warps`  | Public warp system (Probably will not be added)                  |
+| `invsee` | Monitor player inventories                                       |
+| `vanish` | Become invisible/invulnerable and disappear from the player list |
 
-### Licencia
-Este proyecto está bajo una licencia de uso no comercial. Puedes usar, modificar y compartir el código libremente, pero no está permitido venderlo ni utilizarlo con fines comerciales sin autorización del autor.
+### Contributions
 
-### Autor
-Desarrollado por MakiTazo
+Contributions are welcome. You can fork the repository and submit a pull request with your improvements.
 
-> Si tienes sugerencias o encuentras errores, puedes abrir un issue.
+### License
+
+This project is licensed under a non-commercial use license. You are free to use, modify, and share the code, but selling or using it for commercial purposes without the author's permission is not allowed.
+
+### Author
+
+Developed by MakiTazo
+
+> If you have suggestions or find bugs, feel free to open an issue.
